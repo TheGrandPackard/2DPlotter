@@ -1,10 +1,11 @@
-#include "stepper.h"
+#include "gcode.h"
 
 String inputString = "";         // a String to hold incoming data
 bool stringComplete = false;  // whether the string is complete
 
 Axis xAxis = {X_AXIS, 3, 4, 5, 0, 325, 0};
-Axis yAxis = {Y_AXIS, 6, 7, 8, 0, 325, 0};    
+Axis yAxis = {Y_AXIS, 6, 7, 8, 0, 325, 0};
+Axis zAxis = {Z_AXIS, 9, 10, 11, 0, 0, 0};
 
 void setup() {
   // setup serial
@@ -14,7 +15,8 @@ void setup() {
 
   // setup the axes
   setupAxis(&xAxis);
-  setupAxis(&yAxis);
+//  setupAxis(&yAxis);
+//  setupAxis(&zAxis);
   
   Serial.println("Packard Plotter Initialized");
 }
@@ -22,13 +24,17 @@ void setup() {
 void loop() {
   // print the string when a newline arrives:
   if (stringComplete) {
-    Serial.println(inputString);
-
-    // Parse the GCODE command and execute it
-    float distance = inputString.toFloat();
-    moveAxis(&xAxis, distance);
-//    homeAxis(&xAxis);
+//    Serial.print("Received GCODE Command: ");
+//    Serial.println(inputString);
     
+    // Length (with one extra character for the null terminator)
+    int str_len = inputString.length() + 1; 
+    // Prepare the character array (the buffer) 
+    char char_array[str_len];
+    // Copy it over 
+    inputString.toCharArray(char_array, str_len);
+    // Process code
+    processGCODE(char_array);
     // clear the string:
     inputString = "";
     stringComplete = false;

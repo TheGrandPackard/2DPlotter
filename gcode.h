@@ -1,20 +1,22 @@
-#include "WString.h"
+#include "stepper.h"
+#include "hardwareSerial.h"
+
 #ifndef GCODE_H
 #define GCODE_H
 
+const char X_AXIS = 'X';
+const char Y_AXIS = 'Y';
+const char Z_AXIS = 'Z';
+
+#define COMMAND_G0 "G0"
+#define COMMAND_G1 "G1"
+#define COMMAND_G28 "G28"
+
 // https://reprap.org/wiki/G-code
 
-// G0 X12   ; Move to 12mm on the X axis 
-const String G0 = "G0";
-void g0();
+void processGCODE(char *command);
 
-// G1 X90.6 Y13.8 ; Move to 90.6mm on the X axis and 13.8mm on the Y axis 
-const String G1 = "G1";
-void g1();
-
-// G28     ; Home all axes
-// G28 X Z ; Home the X and Z axes
-const String G28 = "28";
-void g28();
+void g0(char **argv , int argc);
+void g28(char **argv , int argc);
 
 #endif

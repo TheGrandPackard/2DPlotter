@@ -1,12 +1,15 @@
 #include "stepper.h"
+#include "gcode.h"
 
 void setupAxis(Axis *axis) {
   pinMode(axis->StepPin,OUTPUT);
   pinMode(axis->DirPin,OUTPUT); 
   pinMode(axis->LimitPin,INPUT); 
+  axis->is_setup = true;
 }
 
 void moveAxis(Axis *axis, float distance) {
+  if(!axis->is_setup) return;
   if(distance == 0) return;
 
   // Make sure we don't go beyond the max of the axis
@@ -14,8 +17,7 @@ void moveAxis(Axis *axis, float distance) {
     Serial.print("Cannot travel beyond maximum of axis. Current position: ");
     Serial.print(axis->CurPos);
     Serial.print(" Maximum position: ");
-    Serial.print(axis->MaxPos);
-    Serial.println();
+    Serial.println(axis->MaxPos);
     return; 
   }
 
@@ -24,16 +26,15 @@ void moveAxis(Axis *axis, float distance) {
     Serial.print("Cannot travel beyond minimum of axis. Current position: ");
     Serial.print(axis->CurPos);
     Serial.print(" Maximum position: ");
-    Serial.print(axis->MaxPos);
-    Serial.println();
+    Serial.println(axis->MaxPos);
     return;
   }
   
-  Serial.print("Moving ");
-  Serial.print(axis->Name);
-  Serial.print(" Axis: ");
-  Serial.print(distance);
-  Serial.println("mm");
+//  Serial.print("Moving ");
+//  Serial.print(axis->Name);
+//  Serial.print(" Axis: ");
+//  Serial.print(distance);
+//  Serial.println("mm");
 
   // Update current x with new end position
   axis->CurPos+= distance;
@@ -47,6 +48,8 @@ void moveAxis(Axis *axis, float distance) {
   for(int i = 0; i < abs(distance) * pulsesPerMM; i++) {
     // Make sure we don't go negative if the limit switch is engaged
     if (!digitalRead(axis->LimitPin) && distance < 0) {
+      Serial.print("Stopped moving axis because of limit switch: ");
+      Serial.println(axis->Name);
       break;
     } 
     
@@ -58,6 +61,11 @@ void moveAxis(Axis *axis, float distance) {
 }
 
 void homeAxis(Axis *axis) {
+  if(!axis->is_setup) return;
+  
+//  Serial.print("Homing ");
+//  Serial.print(axis->Name);
+//  Serial.println(" axis");
 
   // Move in the negative axis direction
   digitalWrite(axis->DirPin,LOW); //Changes the rotations direction

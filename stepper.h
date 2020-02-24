@@ -10,14 +10,11 @@
 // 5 pulses per mm travel
 const int pulsesPerMM = 5;
 
-const String X_AXIS = "X";
-const String Y_AXIS = "Y";
-const String Z_AXIS = "Z";
-
 typedef struct {
-  String Name;
+  char Name;
   int StepPin, DirPin, LimitPin;
   float MinPos, MaxPos, CurPos;
+  bool is_setup;
 } Axis;
 
 void setupAxis(Axis *axis);
