@@ -15,7 +15,7 @@ void setup() {
 
   // setup the axes
   setupAxis(&xAxis);
-//  setupAxis(&yAxis);
+  setupAxis(&yAxis);
 //  setupAxis(&zAxis);
   
   Serial.println("Packard Plotter Initialized");

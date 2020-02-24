@@ -13,6 +13,7 @@ const char Z_AXIS = 'Z';
 #define COMMAND_G28 "G28"
 
 // https://reprap.org/wiki/G-code
+// https://marlinfw.org/docs/gcode/G000-G001.html
 
 void processGCODE(char *command);
 
