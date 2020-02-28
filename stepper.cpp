@@ -60,6 +60,13 @@ void moveAxis(Axis *axis, float distance) {
   }
 }
 
+void moveAxes(Axis *xAxis, float xDistance, Axis *yAxis, float yDistance) {
+  if(!xAxis->is_setup || !yAxis->is_setup) return;
+  if(xDistance == 0 || yDistance == 0) return;
+  
+  // TODO: Calculae rate to step X vs Y axis to move in a straight line
+}
+
 void homeAxis(Axis *axis) {
   if(!axis->is_setup) return;
   

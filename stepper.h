@@ -19,6 +19,7 @@ typedef struct {
 
 void setupAxis(Axis *axis);
 void moveAxis(Axis *axis, float distance);
+void moveAxes(Axis *xAxis, float xDistance, Axis *yAxis, float yDistance);
 void homeAxis(Axis *axis);
 
 #endif

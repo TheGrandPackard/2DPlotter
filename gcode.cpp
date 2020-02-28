@@ -33,38 +33,58 @@ void processGCODE(char *command) {
 // G0 Xnnn Ynnn Znnn Ennn Fnnn Snnn
 // G0 X12   ; Move to 12mm on the X axis 
 // G1 X90.6 Y13.8 ; Move to 90.6mm on the X axis and 13.8mm on the Y axis 
-void g0(char **argv , int argc) {
-//  for(int i=0; i<argc; i++) {
-//    Serial.print("Argument #");
-//    Serial.print(i);
-//    Serial.print(": ");
-//    Serial.println(argv[i]);
+void g0(char **argv , int argc) {  
+//    for(int i=0; i<argc; i++) {
+//      Serial.print("Argument #");
+//      Serial.print(i);
+//      Serial.print(": ");
+//      Serial.println(argv[i]);
 //  }
-  
+
   if(argc < 2){
     Serial.print("Not enough arguments for G0: ");
     Serial.print(argc);
     return;
   }
 
-  // TODO: Make this work for multiple axis parameters
-
-  char *param1 = argv[1];
-  char axis = param1[0];
-  String param1String = String(param1);
-  float distance = param1String.substring(1).toFloat();
+  // Parse axis parameters
+  Axis *x = NULL, *y = NULL;
+  float xDistance = 0, yDistance = 0;
   
-//  Serial.print("Linear move on axis: ");
-//  Serial.print(axis);
-//  Serial.print(" Distance: ");
-//  Serial.println(distance);
+  for(int i=1; i < argc; i++) {
+    char *param = argv[i];
+    char axis = param[0];
+    String paramString = String(param);
+    float distance = paramString.substring(1).toFloat();
 
-  if(axis == X_AXIS) {
-      moveAxis(&xAxis, distance);
-  } else if(axis == Y_AXIS) {
-      moveAxis(&yAxis, distance);
-  } else if(axis == Z_AXIS) {
-      moveAxis(&zAxis, distance);
+    if(axis == X_AXIS) {
+      Serial.print("Parsed X Axis: ");
+      Serial.println(distance);
+      x = &xAxis;
+      xDistance = distance;
+    } else if(axis == Y_AXIS) {
+      Serial.print("Parsed Y Axis: ");
+      Serial.println(distance);
+      y = &yAxis;
+      yDistance = distance;
+    }   
+  }
+
+  if(x != NULL && y != NULL) {
+    Serial.print("Linear move on XY axis: (");
+    Serial.print(xDistance);
+    Serial.print(", ");
+    Serial.print(yDistance);
+    Serial.println(")");
+    moveAxes(x, xDistance, y, yDistance);
+  } else if(x != NULL) {
+    Serial.print("Linear move on X axis: ");
+    Serial.println(xDistance);
+    moveAxis(x, xDistance);
+  } else if(y != NULL) {
+    Serial.print("Linear move on Y axis: ");
+    Serial.println(yDistance);
+    moveAxis(y, yDistance);
   }
 }
 

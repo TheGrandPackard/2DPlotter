@@ -4,7 +4,7 @@ String inputString = "";         // a String to hold incoming data
 bool stringComplete = false;  // whether the string is complete
 
 Axis xAxis = {X_AXIS, 3, 4, 5, 0, 325, 0};
-Axis yAxis = {Y_AXIS, 6, 7, 8, 0, 325, 0};
+Axis yAxis = {Y_AXIS, 6, 7, 8, 0, 315, 0};
 Axis zAxis = {Z_AXIS, 9, 10, 11, 0, 0, 0};
 
 void setup() {
