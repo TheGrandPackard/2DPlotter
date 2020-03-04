@@ -25,8 +25,9 @@ void processGCODE(char *command) {
   } else if(strcmp(strings[0], COMMAND_G28) == 0) {
       g28(strings, index);
   } else {
-    Serial.print("Unrecognized GCODE Command: ");
-    Serial.println(command);
+    Serial.print("echo:Unknown command: \"");
+    Serial.print(command);
+    Serial.print("\n");
   }
 }
 
@@ -38,12 +39,14 @@ void g0(char **argv , int argc) {
 //      Serial.print("Argument #");
 //      Serial.print(i);
 //      Serial.print(": ");
-//      Serial.println(argv[i]);
+//      Serial.print(argv[i]);
+//      Serial.print("\n");
 //  }
 
   if(argc < 2){
     Serial.print("Not enough arguments for G0: ");
     Serial.print(argc);
+    Serial.print("\n");
     return;
   }
 
@@ -58,34 +61,41 @@ void g0(char **argv , int argc) {
     float distance = paramString.substring(1).toFloat();
 
     if(axis == X_AXIS) {
-      Serial.print("Parsed X Axis: ");
-      Serial.println(distance);
+//      Serial.print("Parsed X Axis: ");
+//      Serial.print(distance);
+//      Serial.print("\n");
       x = &xAxis;
       xDistance = distance;
     } else if(axis == Y_AXIS) {
-      Serial.print("Parsed Y Axis: ");
-      Serial.println(distance);
+//      Serial.print("Parsed Y Axis: ");
+//      Serial.print(distance);
+//      Serial.print("\n");
       y = &yAxis;
       yDistance = distance;
     }   
   }
 
   if(x != NULL && y != NULL) {
-    Serial.print("Linear move on XY axis: (");
-    Serial.print(xDistance);
-    Serial.print(", ");
-    Serial.print(yDistance);
-    Serial.println(")");
+//    Serial.print("Linear move on XY axis: (");
+//    Serial.print(xDistance);
+//    Serial.print(", ");
+//    Serial.print(yDistance);
+//    Serial.print(")");
+    Serial.print("\n");
     moveAxes(x, xDistance, y, yDistance);
   } else if(x != NULL) {
-    Serial.print("Linear move on X axis: ");
-    Serial.println(xDistance);
+//    Serial.print("Linear move on X axis: ");
+//    Serial.print(xDistance);
+//    Serial.print("\n");
     moveAxis(x, xDistance);
   } else if(y != NULL) {
-    Serial.print("Linear move on Y axis: ");
-    Serial.println(yDistance);
+//    Serial.print("Linear move on Y axis: ");
+//    Serial.print(yDistance);
+//    Serial.print("\n");
     moveAxis(y, yDistance);
   }
+  
+  Serial.print("ok\n");
 }
 
 // G28     ; Home all axes
@@ -96,21 +106,22 @@ void g28(char **argv , int argc) {
     homeAxis(&xAxis);
     homeAxis(&yAxis);
     homeAxis(&zAxis);
-    return;
-  }
-
-  for(int i=1; i < argc; i++) {
-    char axis = argv[i][0];
-  
-     if(axis == X_AXIS) {
-//        Serial.println("Homing X axis");
-        homeAxis(&xAxis);
-      } else if(axis == Y_AXIS) {
-//        Serial.println("Homing Y axis");
-        homeAxis(&yAxis);
-      } else if(axis == Z_AXIS) {
-//        Serial.println("Homing Z axis");
-        homeAxis(&zAxis);
-      }
+  } else {
+    for(int i=1; i < argc; i++) {
+      char axis = argv[i][0];
+    
+       if(axis == X_AXIS) {
+  //        Serial.print("Homing X axis\n");
+          homeAxis(&xAxis);
+        } else if(axis == Y_AXIS) {
+  //        Serial.print("Homing Y axis\n");
+          homeAxis(&yAxis);
+        } else if(axis == Z_AXIS) {
+  //        Serial.print("Homing Z axis\n");
+          homeAxis(&zAxis);
+        }
+    }
   } 
+
+  Serial.print("ok\n");
 }

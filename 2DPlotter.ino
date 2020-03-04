@@ -18,14 +18,15 @@ void setup() {
   setupAxis(&yAxis);
 //  setupAxis(&zAxis);
   
-  Serial.println("Packard Plotter Initialized");
+  Serial.print("Packard Plotter Initialized\n");
 }
 
 void loop() {
   // print the string when a newline arrives:
   if (stringComplete) {
 //    Serial.print("Received GCODE Command: ");
-//    Serial.println(inputString);
+//    Serial.print(inputString);
+//    Serial.print("\n");
     
     // Length (with one extra character for the null terminator)
     int str_len = inputString.length() + 1; 

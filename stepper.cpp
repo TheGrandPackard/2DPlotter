@@ -16,7 +16,8 @@ bool axisSafetyCheck(Axis *axis, float distance) {
     Serial.print(" Current position: ");
     Serial.print(axis->CurPos);
     Serial.print(" Maximum position: ");
-    Serial.println(axis->MaxPos);
+    Serial.print(axis->MaxPos);
+    Serial.print("\n");
     return false; 
   }
 
@@ -27,7 +28,8 @@ bool axisSafetyCheck(Axis *axis, float distance) {
     Serial.print(" Current position: ");
     Serial.print(axis->CurPos);
     Serial.print(" Maximum position: ");
-    Serial.println(axis->MaxPos);
+    Serial.print(axis->MaxPos);
+    Serial.print("\n");
     return false;
   }
   
@@ -39,11 +41,12 @@ void moveAxis(Axis *axis, float distance) {
   if(distance == 0) return;
   if(!axisSafetyCheck(axis, distance)) return;
   
-  Serial.print("Moving ");
-  Serial.print(axis->Name);
-  Serial.print(" Axis: ");
-  Serial.print(distance);
-  Serial.println("mm");
+//  Serial.print("Moving ");
+//  Serial.print(axis->Name);
+//  Serial.print(" Axis: ");
+//  Serial.print(distance);
+//  Serial.print("mm");
+//  Serial.print("\n");
 
   // Update current x with new end position
   axis->CurPos+= distance;
@@ -54,18 +57,19 @@ void moveAxis(Axis *axis, float distance) {
     digitalWrite(axis->DirPin,LOW); //Changes the rotations direction
   }
   
-  for(int i = 0; i < abs(distance) * pulsesPerMM; i++) {
+  for(float i = 0; i < abs(distance); i += 1/pulsesPerMM) {
     // Make sure we don't go negative if the limit switch is engaged
     if (!digitalRead(axis->LimitPin) && distance < 0) {
       Serial.print("Stopped moving axis because of limit switch: ");
-      Serial.println(axis->Name);
+      Serial.print(axis->Name);
+      Serial.print("\n");
       break;
     } 
     
     digitalWrite(axis->StepPin,HIGH); 
-    delayMicroseconds(500); 
+    delayMicroseconds(pulseDelay); 
     digitalWrite(axis->StepPin,LOW); 
-    delayMicroseconds(500); 
+    delayMicroseconds(pulseDelay); 
   }
 }
 
@@ -75,10 +79,11 @@ void moveAxes(Axis *xAxis, float xDistance, Axis *yAxis, float yDistance) {
   if(!axisSafetyCheck(xAxis, xDistance)) return;
   if(!axisSafetyCheck(yAxis, yDistance)) return;
   
-  Serial.print("Moving X Axis: ");
-  Serial.print(xDistance);
-  Serial.print(" Y Axis: ");
-  Serial.println(yDistance);
+//  Serial.print("Moving X Axis: ");
+//  Serial.print(xDistance);
+//  Serial.print(" Y Axis: ");
+//  Serial.print(yDistance);
+//  Serial.print("\n");
 
   // Update current x and y with new end position
   xAxis->CurPos+= xDistance;
@@ -114,33 +119,34 @@ void moveAxes(Axis *xAxis, float xDistance, Axis *yAxis, float yDistance) {
     axisRatio = abs(yDistance) / abs(xDistance);
   }
 
-  int smallerAxisCounter = 0;
+  float smallerAxisCounter = 0;
 
   // Move larger axis with smaller axis at ratio intervals
-  for(int i = 0; i < abs(largerDistance) * pulsesPerMM; i++) {
+  for(float i = 0; i < abs(largerDistance); i += 1/pulsesPerMM) {
     // Make sure we don't go negative if the limit switch is engaged
     if (!digitalRead(xAxis->LimitPin) && xDistance < 0) {
-      Serial.print("Stopped moving because of X axis limit switch: ");
+      Serial.print("Stopped moving because of X axis limit switch\n");
       break;
     } else if (!digitalRead(yAxis->LimitPin) && yDistance < 0) {
-      Serial.println("Stopped moving because of Y axis limit switch");
+      Serial.print("Stopped moving because of Y axis limit switch\n");
       break;
     }
 
     // Always move larger axis
     digitalWrite(largerAxis->StepPin,HIGH); 
-    delayMicroseconds(500); 
+    delayMicroseconds(pulseDelay); 
     digitalWrite(largerAxis->StepPin,LOW); 
-    delayMicroseconds(500);
     
     // Move smaller axis if applicable
-    smallerAxisCounter++;
-    if (smallerAxisCounter == axisRatio) {
+    smallerAxisCounter += 1/pulsesPerMM;
+    if (smallerAxisCounter >= axisRatio) {
+      delayMicroseconds(pulseDelay); 
       digitalWrite(smallerAxis->StepPin,HIGH); 
-      delayMicroseconds(500); 
+      delayMicroseconds(pulseDelay);
       digitalWrite(smallerAxis->StepPin,LOW); 
-      delayMicroseconds(500);
-      smallerAxisCounter = 0;
+      smallerAxisCounter - axisRatio;
+    } else {
+      delayMicroseconds(pulseDelay);
     }
   }
 }
@@ -150,7 +156,8 @@ void homeAxis(Axis *axis) {
   
 //  Serial.print("Homing ");
 //  Serial.print(axis->Name);
-//  Serial.println(" axis");
+//  Serial.print(" axis");
+//  Serial.print("\n");
 
   // Move in the negative axis direction
   digitalWrite(axis->DirPin,LOW); //Changes the rotations direction
@@ -162,9 +169,9 @@ void homeAxis(Axis *axis) {
     } 
     
     digitalWrite(axis->StepPin,HIGH); 
-    delayMicroseconds(500); 
+    delayMicroseconds(pulseDelay); 
     digitalWrite(axis->StepPin,LOW); 
-    delayMicroseconds(500); 
+    delayMicroseconds(pulseDelay); 
   }
 
   axis->CurPos = 0;

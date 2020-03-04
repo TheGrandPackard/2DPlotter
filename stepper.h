@@ -8,7 +8,8 @@
 // 200 pulses in 1 rotation
 // 1 rotation is 40mm travel (12mm diameter gear)
 // 5 pulses per mm travel
-const int pulsesPerMM = 5;
+const float pulsesPerMM = 5.0;
+const int pulseDelay = 1000;
 
 typedef struct {
   char Name;
